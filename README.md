@@ -1,4 +1,16 @@
+# LiDAR data processing guidelines
+
+**Case study: Thantham's Thesis: Tree species classification based on LiDAR metrics and multispectral remote sensing**
+
+### Prequisition
+
+- R
+- R Studio
+- Hugging Face account (optional)
+
 ## Install packages
+
+Demo requires packages to be installed before starting th study
 
 ```R
 install.packages("lidR")
@@ -10,6 +22,8 @@ install.packages("moments")
 
 ## Import libraries
 
+This can be run once at first time of R session running
+
 ```R
 library(lidR)
 library(raster)
@@ -20,12 +34,14 @@ library(moments)
 
 ## Read LAS data
 
+replace the `<path>/<to>/file.las` with the `pine.las` in the repository 
+
 ```R
 las = lidR:readLAS("<path>/<to>/file.las")
 ```
 
 ## Preprocessing LAS data
-
+normalize terrain surface of las data using this. KNN-IDW is selected as example of generating ground surface
 ```R
 # Terrain normalize
 las = normalize_height(las, knnidw())
@@ -33,6 +49,7 @@ las = normalize_height(las, knnidw())
 
 ## Create Canopy Height Model
 
+CHM requires to define raster resolution and smoothing parameters. `0.3` m is declared as resolution along with `3x3` window and median statistic to smoothen CHM map 
 ```R
 # Create CHM map with 0.3 m resolution
 chm = rasterize_canopy(las, res=0.3, dsmtin())
@@ -42,7 +59,7 @@ chm = terra::focal(chm, matrix(1,3,3), fun = median)
 ```
 
 ## Segment trees
-
+Identifing tree algorithm  shows with 2 example functions: `li2012` as point-cloud based and `dalponte2016` as pixel based method that needs CHM map and tree tops data. Noted that `lmf` is local-maxima-focal parameter of windowing searching for tree tops. `5` is pre-defined as 5 pixels to search trees
 ```R
 # li2012 algorithm
 seg_las = segment_trees(las, li2012())
@@ -55,6 +72,8 @@ seg_las = segment_trees(las, dalponte2016(chm, treetops))
 ```
 
 ## Calculate tree metrics
+
+Even there are many pre-built statistics of tree metrics. Thantham's study purposed a bunch of metrics including Z and Intensity properties of a tree, 88 in total. customized function of metric calculation is needes. It is okay to copy-paste to R script area in R Studio program and run once before running `crown_metrics` function.
 
 ```R
 
@@ -176,7 +195,11 @@ seg_las = segment_trees(las, dalponte2016(chm, treetops))
   
 ```
 
+There maybe to visualize crowns map over `plot` function to see tree location or any crown shape e.g. `plot(metrics_tree)`.
+
 ## Export tree crowns with metrics
+
+In the step to export tree metrics in geographical data format, `sf` library allows us to export segmented and metrices object as geojson (.shp also available). Additionally, CHM we created can be exported using `writeRaster` function from `raster` library.
 
 ```R
 
@@ -189,3 +212,5 @@ sf::st_write(sf::st_as_sf(treetops), "<path>/<to>/file.geojson")
 
 writeRaster(chm, "<path>/<to>/file.tif")
 ```
+
+After this step, you may prefer to open .geojson and .tif files in QGIS program or ArcGIS program in order to surf the data results.
