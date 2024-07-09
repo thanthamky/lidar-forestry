@@ -71,6 +71,13 @@ seg_las = segment_trees(las, dalponte2016(chm, treetops))
 
 ```
 
+Since we already have CHM map, we can plot the CHM map with tree tops location using this plot code
+
+```R
+plot(chm, col = height.colors(50))
+plot(sf::st_geometry(treetops), add = TRUE, pch = 3)
+```
+
 ## Calculate tree metrics
 
 Even there are many pre-built statistics of tree metrics. Thantham's study purposed a bunch of metrics including Z and Intensity properties of a tree, 88 in total. customized function of metric calculation is needes. It is okay to copy-paste to R script area in R Studio program and run once before running `crown_metrics` function.
