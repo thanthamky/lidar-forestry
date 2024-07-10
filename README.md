@@ -37,7 +37,7 @@ library(moments)
 replace the `<path>/<to>/file.las` with the `pine.las` in the repository 
 
 ```R
-las = lidR:readLAS("<path>/<to>/file.las")
+las = readLAS("<path>/<to>/file.las")
 ```
 
 ## Preprocessing LAS data
