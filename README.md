@@ -38,6 +38,8 @@ replace the `<path>/<to>/file.las` with the `pine.las` in the repository
 
 ```R
 las = readLAS("<path>/<to>/file.las")
+
+plot(las)
 ```
 
 ## Preprocessing LAS data
