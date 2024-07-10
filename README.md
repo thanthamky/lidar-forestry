@@ -71,6 +71,8 @@ seg_las = segment_trees(las, li2012())
 treetops = locate_trees(las, lmf(5))
 seg_las = segment_trees(las, dalponte2016(chm, treetops))
 
+plot(seg_las, color="treeID")
+
 ```
 
 Since we already have CHM map, we can plot the CHM map with tree tops location using this plot code
